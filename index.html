@@ -202,23 +202,25 @@
 
 <script>
 /* ----------------- Config ----------------- */
-const SECRET = 'Mama'; // change this if you want a different password (lowercase)
+/* ----------------- Config ----------------- */
+const SECRET = 'Mama'; // your password (any case will work)
 const TOTAL_SCREENS = 10;
 /* ------------------------------------------ */
 
 // password unlock
 const lock = document.getElementById('lock');
-document.getElementById('pwBtn').addEventListener('click', ()=>{
-  const v = (document.getElementById('pw').value||'').trim().toLowerCase();
-  if(v===SECRET){
-    lock.style.display='none';
+document.getElementById('pwBtn').addEventListener('click', () => {
+  const v = (document.getElementById('pw').value || '').trim();
+  if (v.toLowerCase() === SECRET.toLowerCase()) {
+    lock.style.display = 'none';
     startFall();
     playBgm();
   } else {
-    document.getElementById('pw').style.borderColor='#ff9fc5';
+    document.getElementById('pw').style.borderColor = '#ff9fc5';
     shake(lock);
   }
 });
+
 
 function shake(el){ el.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300,iterations:1}); }
 
