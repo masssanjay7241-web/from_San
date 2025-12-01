@@ -1,1 +1,324 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>For Jeevi — Surprise ✨</title>
+<style>
+  :root{
+    --pink1: #ffd6e8;
+    --pink2: #ffb3d6;
+    --accent: #ff5fa2;
+    --soft: #fff6fb;
+    --card-shadow: 0 18px 40px rgba(0,0,0,0.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto; background:linear-gradient(160deg,var(--pink1),#fff1f7); color:#333; min-height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+
+  /* falling hearts background */
+  .falling-heart{position:fixed; left:0; top:0; right:0; bottom:0; pointer-events:none; overflow:hidden;}
+  .fh{position:absolute; font-size:18px; opacity:0.9; transform:translateY(-10vh); animation:fh 8s linear infinite;}
+  @keyframes fh{0%{transform:translateY(-10vh) rotate(0) scale(0.8); opacity:0} 20%{opacity:1} 100%{transform:translateY(110vh) rotate(360deg) scale(1.2); opacity:0}}
+
+  /* frame */
+  .frame{width:min(920px,96vw); max-height:96vh; overflow:auto; border-radius:20px; background:linear-gradient(180deg,var(--soft),#fff); padding:28px; box-shadow:var(--card-shadow); position:relative}
+  h1,h2{margin:0}
+  h1{font-size:2rem; color:var(--accent); text-align:center}
+  p{line-height:1.5}
+
+  /* lock/password overlay */
+  .lock{position:absolute; inset:0; background:rgba(255,245,250,0.95); display:flex; align-items:center; justify-content:center; flex-direction:column; border-radius:20px; z-index:60}
+  .lock .box{background:linear-gradient(180deg,#fff,#fff6fb); padding:28px; border-radius:18px; box-shadow:0 12px 30px rgba(0,0,0,0.09); text-align:center}
+  .lock input{padding:12px 14px; border-radius:12px; border:1px solid #ffd7ea; width:200px; margin-top:12px}
+  .lock button{margin-top:14px; padding:10px 16px; border-radius:12px; border:none; background:var(--accent); color:white; cursor:pointer}
+
+  /* screens */
+  .screen{display:none; padding:18px; text-align:center}
+  .screen.active{display:block; animation:screenIn .6s ease}
+  @keyframes screenIn{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+
+  .btn{display:inline-block; padding:10px 18px; background:var(--accent); color:white; border:none; border-radius:14px; cursor:pointer; font-weight:600; box-shadow:0 8px 18px rgba(255,95,162,0.18); margin-top:16px}
+  .btn.ghost{background:transparent; color:var(--accent); border:2px solid #ffd0e6}
+
+  /* slideshow */
+  .slideshow{width:100%; max-width:640px; height:360px; margin:18px auto; border-radius:18px; overflow:hidden; position:relative; box-shadow:0 14px 30px rgba(0,0,0,0.08)}
+  .slideshow img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1s;}
+  .slideshow img.show{opacity:1}
+
+  /* typing effect */
+  .letter{font-family:Georgia, 'Times New Roman', serif; font-size:1.15rem; max-width:720px; margin:18px auto; background:linear-gradient(180deg,#fff,#fff8fb); padding:18px; border-radius:12px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+  .cursor{display:inline-block; width:8px; background:var(--accent); margin-left:6px; animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* heart burst (particles) */
+  .burst-canvas{position:absolute; inset:0; pointer-events:none; z-index:50}
+
+  /* final neon message */
+  .final{font-size:2.2rem; padding:26px; border-radius:16px; background:linear-gradient(90deg,#ffe9f5,#fff3f9); box-shadow:0 18px 50px rgba(255,95,162,0.12)}
+  .neon{color:#fff; text-shadow:0 0 6px #ffd2ea, 0 0 18px #ff8fc4, 0 0 30px #ff4fa3; background:linear-gradient(90deg,#ffb3d6,#ff5fa2); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+  /* YES/NO */
+  .choice{display:flex; gap:12px; justify-content:center; margin-top:12px}
+  .yes{background:#ff6fb3}
+  .no{background:#ffd0e0; color:#8b2a4b}
+
+  /* confetti canvas */
+  #confetti{position:absolute; inset:0; pointer-events:none; z-index:70}
+
+  footer{margin-top:18px; text-align:center; color:#b24b78; font-size:0.95rem}
+
+  /* responsive */
+  @media (max-width:720px){ .slideshow{height:260px} }
+</style>
+</head>
+<body>
+
+<div class="falling-heart" id="falling"></div>
+<div class="frame">
+  <h1>For Jeevi ✨</h1>
+  <p style="text-align:center; color:#8b496b; margin-top:6px">A lil' surprise story — open each one like a present 🎁</p>
+
+  <!-- password lock overlay -->
+  <div class="lock" id="lock">
+    <div class="box">
+      <h2>Shh... it's private 💌</h2>
+      <p>Enter the secret word to start the surprises</p>
+      <input id="pw" placeholder="type the secret" aria-label="password" />
+      <div>
+        <button id="pwBtn">Unlock</button>
+      </div>
+      <p style="font-size:0.85rem; color:#a85a85; margin-top:8px">Tip: it's something I call her 🫶</p>
+    </div>
+  </div>
+
+  <!-- screens container -->
+  <div id="screens">
+
+    <!-- 1 -->
+    <section class="screen active" id="s1">
+      <h2>Open this, Jeevi 💖</h2>
+      <p>Hey Jeevitha — I made this just for you. Ready for tiny surprises?</p>
+      <button class="btn" data-step="1">Open Surprise</button>
+    </section>
+
+    <!-- 2 -->
+    <section class="screen" id="s2">
+      <h2>Soft start 🌸</h2>
+      <p>Soft colors, soft vibes — just like you. You make everything calmer.</p>
+      <button class="btn" data-step="2">Next</button>
+    </section>
+
+    <!-- 3 slideshow -->
+    <section class="screen" id="s3">
+      <h2>Memories 📸</h2>
+      <p>Some pics of moments — swap in your own pics named pic1.jpg...pic5.jpg</p>
+      <div class="slideshow" id="slideshow">
+        <img src="pic1.jpg" alt="pic1" class="show" onerror="this.style.opacity=0">
+        <img src="pic2.jpg" alt="pic2" onerror="this.style.opacity=0">
+        <img src="pic3.jpg" alt="pic3" onerror="this.style.opacity=0">
+        <img src="pic4.jpg" alt="pic4" onerror="this.style.opacity=0">
+        <img src="pic5.jpg" alt="pic5" onerror="this.style.opacity=0">
+      </div>
+      <button class="btn" data-step="3">Next</button>
+    </section>
+
+    <!-- 4 typing love letter intro -->
+    <section class="screen" id="s4">
+      <h2>A tiny letter ✉️</h2>
+      <div class="letter" id="letter"> 
+        <span id="typed"></span><span class="cursor" id="lcur"></span>
+      </div>
+      <button class="btn" data-step="4">Next</button>
+    </section>
+
+    <!-- 5 interactive name message -->
+    <section class="screen" id="s5">
+      <h2>Jeevi — this one's for you</h2>
+      <p>I call you <strong>Jeevi</strong> 'cause it fits perfectly 😌</p>
+      <button class="btn" data-step="5">Next</button>
+    </section>
+
+    <!-- 6 heart burst on click demo -->
+    <section class="screen" id="s6">
+      <h2>Tap the heart 💥</h2>
+      <p>Give it a tap — little heart burst will pop ✨</p>
+      <button class="btn" id="burstBtn">Tap Me ❤️</button>
+      <button class="btn ghost" data-step="6">Next</button>
+    </section>
+
+    <!-- 7 add emoji & message -->
+    <section class="screen" id="s7">
+      <h2>You're my favorite person 🥺</h2>
+      <p>Even on boring days, thinking of you makes me smile.</p>
+      <button class="btn" data-step="7">Next</button>
+    </section>
+
+    <!-- 8 question -->
+    <section class="screen" id="s8">
+      <h2>Do you like me too?</h2>
+      <div class="choice">
+        <button class="btn yes" id="yes">Yes 💗</button>
+        <button class="btn no" id="no">No 😅</button>
+      </div>
+    </section>
+
+    <!-- 9 build-up screen -->
+    <section class="screen" id="s9">
+      <h2>Almost there ✨</h2>
+      <p>One last little thing before the big finish...</p>
+      <button class="btn" data-step="8">Reveal Final</button>
+    </section>
+
+    <!-- 10 final screen -->
+    <section class="screen" id="s10">
+      <div class="final">
+        <div class="neon">Jeevi — Will you be mine?</div>
+        <p style="margin-top:14px">I'm kinda head-over-heels for you. Wanna make this official? 🥺💞</p>
+        <div style="margin-top:12px">
+          <button class="btn" id="finalYes">Yes — I do 💍</button>
+          <button class="btn ghost" id="finalNo">Not yet</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>Made with a million tiny hearts ❤️ — for Jeevitha (Jeevi)</footer>
+</div>
+
+<!-- canvas layers for bursts/confetti -->
+<canvas id="burst" class="burst-canvas"></canvas>
+<canvas id="confetti"></canvas>
+
+<!-- background music (replace music.mp3 with your file) -->
+<audio id="bgm" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+  <!-- replace music.mp3 with your file; browsers may block autoplay, so there's a play button below -->
+</audio>
+<div style="position:fixed; left:18px; bottom:18px; z-index:80">
+  <button class="btn" id="musicToggle">Play Music ▶️</button>
+</div>
+
+<script>
+/* ----------------- Config ----------------- */
+const SECRET = 'jeevi'; // change this if you want a different password (lowercase)
+const TOTAL_SCREENS = 10;
+/* ------------------------------------------ */
+
+// password unlock
+const lock = document.getElementById('lock');
+document.getElementById('pwBtn').addEventListener('click', ()=>{
+  const v = (document.getElementById('pw').value||'').trim().toLowerCase();
+  if(v===SECRET){
+    lock.style.display='none';
+    startFall();
+    playBgm();
+  } else {
+    document.getElementById('pw').style.borderColor='#ff9fc5';
+    shake(lock);
+  }
+});
+
+function shake(el){ el.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300,iterations:1}); }
+
+// screen navigation
+const screens = [];
+for(let i=1;i<=TOTAL_SCREENS;i++) screens[i]=document.getElementById('s'+i);
+
+function showScreen(n){ for(let i=1;i<=TOTAL_SCREENS;i++){ if(screens[i]) screens[i].classList.remove('active'); } if(screens[n]) screens[n].classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+
+// buttons next
+document.querySelectorAll('.btn[data-step]').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const step = parseInt(b.dataset.step,10);
+    const next = step+1;
+    showScreen(next);
+    if(next===4) startTyping();
+  });
+});
+
+/* Slideshow */
+(function(){
+  const imgs = document.querySelectorAll('#slideshow img');
+  let idx=0;
+  setInterval(()=>{
+    if(imgs.length===0) return;
+    imgs[idx].classList.remove('show'); idx=(idx+1)%imgs.length; imgs[idx].classList.add('show');
+  },2500);
+})();
+
+/* Typing effect (love letter) */
+const LETTER = `hey jeevi,\n\nthere's this small fuzzy thing that happens when i think of you — it's like the sun gets softer and every song turns sweeter. i don't always say it, but i'm kinda crazy about you.\n\n- always, me`;
+let tindex=0;
+function startTyping(){ const out=document.getElementById('typed'); const cur=document.getElementById('lcur'); out.textContent=''; tindex=0; const it=setInterval(()=>{ if(tindex>=LETTER.length){ clearInterval(it); cur.style.display='none'; return;} const ch=LETTER[tindex++]; if(ch==='\n') out.textContent += '\n'; else out.textContent += ch; out.scrollTop = out.scrollHeight; },40); }
+
+/* Heart burst on click */
+const burstCan = document.getElementById('burst'); const bctx = burstCan.getContext('2d');
+function resizeBurst(){ burstCan.width = window.innerWidth; burstCan.height = window.innerHeight; }
+window.addEventListener('resize', resizeBurst); resizeBurst();
+
+function heartsBurst(x,y){ const particles=[]; for(let i=0;i<18;i++){ particles.push({x,y,vx:(Math.random()-0.5)*6, vy:(Math.random()-1.5)*-6, life:60, size:8+Math.random()*8, hue:320+Math.random()*30}); }
+  let t=0; const anim=setInterval(()=>{ t++; bctx.clearRect(0,0,burstCan.width,burstCan.height); for(let p of particles){ p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life--; const alpha = Math.max(0, p.life/60); drawHeart(bctx, p.x, p.y, p.size, p.hue, alpha); } if(t>80){ clearInterval(anim); bctx.clearRect(0,0,burstCan.width,burstCan.height);} },16);
+}
+
+function drawHeart(ctx,x,y,s,h,alpha){ ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x,y); ctx.rotate(Math.PI/8); ctx.scale(s/24,s/24); ctx.fillStyle = `hsl(${h},80%,60%)`; ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(0,-6,-12,-14,-24,-6); ctx.bezierCurveTo(-44,6,-24,36,0,56); ctx.bezierCurveTo(24,36,44,6,24,-6); ctx.bezierCurveTo(12,-14,0,-6,0,0); ctx.fill(); ctx.restore(); }
+
+// bind burst button
+document.getElementById('burstBtn').addEventListener('click',(e)=>{ const r=e.target.getBoundingClientRect(); heartsBurst(r.left + r.width/2, r.top + r.height/2); pulseBtn(e.target); });
+function pulseBtn(el){ el.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:280}); }
+
+/* YES/NO handling */
+document.getElementById('yes').addEventListener('click', ()=>{ showScreen(9); confettiBurst(); });
+document.getElementById('no').addEventListener('click', ()=>{ // playful response
+  alert('aww, it\'s okay — maybe later!')
+  showScreen(9);
+});
+
+/* FINAL buttons */
+document.getElementById('finalYes').addEventListener('click', ()=>{ confettiBurst(); neonGlow(); });
+document.getElementById('finalNo').addEventListener('click', ()=>{ alert('no worries — I still think you\'re awesome 💜'); });
+
+/* falling hearts generator */
+const fallingEl = document.getElementById('falling');
+function startFall(){ for(let i=0;i<18;i++) spawnFH(i*300); setInterval(()=>spawnFH(0),1200); }
+function spawnFH(delay){ setTimeout(()=>{ const d=document.createElement('div'); d.className='fh'; d.style.left = Math.random()*100 + 'vw'; d.style.fontSize = (12+Math.random()*26)+'px'; d.style.opacity = (0.6+Math.random()*0.4); d.textContent = '❤️'; fallingEl.appendChild(d); setTimeout(()=>d.remove(),9000); }, delay); }
+
+/* music control */
+const bgm = document.getElementById('bgm'); const musicToggle = document.getElementById('musicToggle');
+function playBgm(){ bgm.play().catch(()=>{}); musicToggle.textContent='Pause Music ⏸️'; }
+function pauseBgm(){ bgm.pause(); musicToggle.textContent='Play Music ▶️'; }
+musicToggle.addEventListener('click', ()=>{ if(bgm.paused) playBgm(); else pauseBgm(); });
+
+/* confetti */
+const conf = document.getElementById('confetti'); const cctx = conf.getContext('2d'); function resizeConf(){ conf.width=window.innerWidth; conf.height=window.innerHeight; }
+window.addEventListener('resize', resizeConf); resizeConf();
+function confettiBurst(){ const pieces=[]; for(let i=0;i<160;i++){ pieces.push({x:window.innerWidth/2,y:window.innerHeight/3 + Math.random()*200, vx:(Math.random()-0.5)*8, vy:(Math.random()-6)*4, r:4+Math.random()*8, color: `hsl(${Math.random()*50+320},80%,60%)`, life:120}); }
+  let t=0; const id=setInterval(()=>{ t++; cctx.clearRect(0,0,conf.width,conf.height); for(let p of pieces){ p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life--; cctx.fillStyle=p.color; cctx.beginPath(); cctx.ellipse(p.x,p.y,p.r, p.r*0.6, 0,0,Math.PI*2); cctx.fill(); } if(t>140){ clearInterval(id); cctx.clearRect(0,0,conf.width,conf.height); } },16);
+}
+
+/* neon glow on final */
+function neonGlow(){ const el = document.querySelector('.neon'); el.animate([{filter:'blur(0px) drop-shadow(0 0 0px #ff8fc4)'},{filter:'blur(0px) drop-shadow(0 0 40px #ff8fc4)'}],{duration:900, iterations:3}); confettiBurst(); }
+
+/* show screen helper on choices */
+function showScreen(n){ for(let i=1;i<=TOTAL_SCREENS;i++){ const s=document.getElementById('s'+i); if(s) s.classList.remove('active'); } const cur=document.getElementById('s'+n); if(cur) cur.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* simple helper to create heart particles on any button clicks (global) */
+document.addEventListener('click', (ev)=>{
+  const t = ev.target; if(t.matches('.btn')){
+    const r = t.getBoundingClientRect(); heartsBurst(r.left + r.width/2, r.top + r.height/2);
+  }
+});
+
+/* initial resize */n
+resizeBurst(); resizeConf();
+
+// unlock by pressing enter too
+document.getElementById('pw').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('pwBtn').click(); });
+
+/* small UX: if page loaded and there's a fragment like #open3 show that screen (optional) */
+(function(){ const frag = location.hash.replace('#',''); const n = parseInt(frag,10); if(n>=1 && n<=TOTAL_SCREENS){ lock.style.display='none'; showScreen(n); startFall(); } })();
+
+</script>
+</body>
+</html>
