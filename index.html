@@ -135,7 +135,7 @@
     <!-- 5 interactive name message -->
     <section class="screen" id="s5">
       <h2>Jeevi — this one's for you</h2>
-      <p>I call you <strong>Jeevi</strong> 'cause it fits perfectly 😌</p>
+      <p>Jeevi, I love you more than you Thinking, and I’ll love you forever.</p>
       <button class="btn" data-step="5">Next</button>
     </section>
 
@@ -149,14 +149,14 @@
 
     <!-- 7 add emoji & message -->
     <section class="screen" id="s7">
-      <h2>You're my favorite person 🥺</h2>
-      <p>Even on boring days, thinking of you makes me smile.</p>
+      <h2>You're my favorite person , Comfort Zone</h2>
+      <p>Even on boring days, just thinking of you makes me smile. That’s why, no matter what happens or even if you leave me, I can’t imagine being without you.</p>
       <button class="btn" data-step="7">Next</button>
     </section>
 
     <!-- 8 question -->
     <section class="screen" id="s8">
-      <h2>Do you like me too?</h2>
+      <h2>Did you enjoy it?</h2>
       <div class="choice">
         <button class="btn yes" id="yes">Yes 💗</button>
         <button class="btn no" id="no">No 😅</button>
@@ -184,7 +184,7 @@
 
   </div>
 
-  <footer>Made with a million tiny hearts ❤️ — for Jeevitha (Jeevi)</footer>
+  <footer>Made with a million tiny hearts ❤️ By SAN — for my love</footer>
 </div>
 
 <!-- canvas layers for bursts/confetti -->
@@ -251,7 +251,7 @@ document.querySelectorAll('.btn[data-step]').forEach(b=>{
 })();
 
 /* Typing effect (love letter) */
-const LETTER = `hey jeevi,\n\nthere's this small fuzzy thing that happens when i think of you — it's like the sun gets softer and every song turns sweeter. i don't always say it, but i'm kinda crazy about you.\n\n- always, me`;
+const LETTER = `Chello,\n\n I love you in ways I never thought were possible. Every smile, every word, every touch from you stays with me, filling my heart with warmth I can’t describe. No matter what happens, my love for you will always be strong, unwavering, and completely yours. You’ve become a part of me, the part that dreams, laughs, and hopes.\n\n- always, me`;
 let tindex=0;
 function startTyping(){ const out=document.getElementById('typed'); const cur=document.getElementById('lcur'); out.textContent=''; tindex=0; const it=setInterval(()=>{ if(tindex>=LETTER.length){ clearInterval(it); cur.style.display='none'; return;} const ch=LETTER[tindex++]; if(ch==='\n') out.textContent += '\n'; else out.textContent += ch; out.scrollTop = out.scrollHeight; },40); }
 
