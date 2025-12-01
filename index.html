@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,11 +173,21 @@
     <section class="screen" id="s10">
       <div class="final">
         <div class="neon">Jeevi — Will you be mine?</div>
-        <p style="margin-top:14px">Will you always be real with me and stay here for me?💞</p>
+        <p style="margin-top:14px">I’m kinda head‑over‑heels for you… will you always be loyal to me? Always mine?💞</p>
         <div style="margin-top:12px">
           <button class="btn" id="finalYes">Yes — I do</button>
           <button class="btn ghost" id="finalNo">No</button>
         </div>
+      </div>
+    </section>
+
+    <!-- 11 celebration screen -->
+    <section class="screen" id="s11">
+      <div class="final" style="position:relative; overflow:hidden; background:#ffe9f5; display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh">
+        <h2 style="font-size:2.2rem; margin-bottom:16px; color:#ff4fa3;">Yay! 🎉💖</h2>
+        <img src="cats_kissing.png" alt="Cute cats hugging" style="width:320px; max-width:80%; margin-bottom:24px;">
+        <p style="text-align:center; font-size:1.1rem; color:#8b2a4b;">Our love forever! 💕💞</p>
+        <canvas id="fireworks" style="position:absolute; inset:0; pointer-events:none; z-index:10;"></canvas>
       </div>
     </section>
 
@@ -194,7 +203,6 @@
 <!-- background music (replace music.mp3 with your file) -->
 <audio id="bgm" loop preload="auto">
   <source src="music.mp3" type="audio/mpeg">
-  <!-- replace music.mp3 with your file; browsers may block autoplay, so there's a play button below -->
 </audio>
 <div style="position:fixed; left:18px; bottom:18px; z-index:80">
   <button class="btn" id="musicToggle">Play Music ▶️</button>
@@ -202,38 +210,28 @@
 
 <script>
 /* ----------------- Config ----------------- */
-/* ----------------- Config ----------------- */
-const SECRET = 'Mama'; // your password (any case will work)
-const TOTAL_SCREENS = 10;
-/* ------------------------------------------ */
+const SECRET = 'Mama';
+const TOTAL_SCREENS = 11;
 
-// password unlock
+/* Password unlock */
 const lock = document.getElementById('lock');
 document.getElementById('pwBtn').addEventListener('click', () => {
   const v = (document.getElementById('pw').value || '').trim();
   if (v.toLowerCase() === SECRET.toLowerCase()) {
-    lock.style.display = 'none';
-    startFall();
-    playBgm();
-  } else {
-    document.getElementById('pw').style.borderColor = '#ff9fc5';
-    shake(lock);
-  }
+    lock.style.display = 'none'; startFall(); playBgm();
+  } else { document.getElementById('pw').style.borderColor = '#ff9fc5'; shake(lock); }
 });
-
-
 function shake(el){ el.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300,iterations:1}); }
 
-// screen navigation
+/* Screens */
 const screens = [];
 for(let i=1;i<=TOTAL_SCREENS;i++) screens[i]=document.getElementById('s'+i);
-
 function showScreen(n){ for(let i=1;i<=TOTAL_SCREENS;i++){ if(screens[i]) screens[i].classList.remove('active'); } if(screens[n]) screens[n].classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
 
-// buttons next
+/* Buttons next */
 document.querySelectorAll('.btn[data-step]').forEach(b=>{
   b.addEventListener('click', ()=>{
-    const step = parseInt(b.dataset.step,10);
+    const step = parseInt(b.dataset.step,10); 
     const next = step+1;
     showScreen(next);
     if(next===4) startTyping();
@@ -242,85 +240,60 @@ document.querySelectorAll('.btn[data-step]').forEach(b=>{
 
 /* Slideshow */
 (function(){
-  const imgs = document.querySelectorAll('#slideshow img');
-  let idx=0;
+  const imgs = document.querySelectorAll('#slideshow img'); let idx=0;
   setInterval(()=>{
     if(imgs.length===0) return;
     imgs[idx].classList.remove('show'); idx=(idx+1)%imgs.length; imgs[idx].classList.add('show');
   },2500);
 })();
 
-/* Typing effect (love letter) */
+/* Typing effect */
 const LETTER = `Chello,\n\n I love you in ways I never thought were possible. Every smile, every word, every touch from you stays with me, filling my heart with warmth I can’t describe. No matter what happens, my love for you will always be strong, unwavering, and completely yours. You’ve become a part of me, the part that dreams, laughs, and hopes.\n\n- always, me`;
 let tindex=0;
-function startTyping(){ const out=document.getElementById('typed'); const cur=document.getElementById('lcur'); out.textContent=''; tindex=0; const it=setInterval(()=>{ if(tindex>=LETTER.length){ clearInterval(it); cur.style.display='none'; return;} const ch=LETTER[tindex++]; if(ch==='\n') out.textContent += '\n'; else out.textContent += ch; out.scrollTop = out.scrollHeight; },40); }
+function startTyping(){ const out=document.getElementById('typed'); const cur=document.getElementById('lcur'); out.textContent=''; tindex=0; const it=setInterval(()=>{
+  if(tindex>=LETTER.length){ clearInterval(it); cur.style.display='none'; return;}
+  const ch=LETTER[tindex++]; out.textContent += (ch==='\\n')?'\n':ch; out.scrollTop = out.scrollHeight;
+},40); }
 
-/* Heart burst on click */
+/* Heart burst */
 const burstCan = document.getElementById('burst'); const bctx = burstCan.getContext('2d');
 function resizeBurst(){ burstCan.width = window.innerWidth; burstCan.height = window.innerHeight; }
 window.addEventListener('resize', resizeBurst); resizeBurst();
-
 function heartsBurst(x,y){ const particles=[]; for(let i=0;i<18;i++){ particles.push({x,y,vx:(Math.random()-0.5)*6, vy:(Math.random()-1.5)*-6, life:60, size:8+Math.random()*8, hue:320+Math.random()*30}); }
-  let t=0; const anim=setInterval(()=>{ t++; bctx.clearRect(0,0,burstCan.width,burstCan.height); for(let p of particles){ p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life--; const alpha = Math.max(0, p.life/60); drawHeart(bctx, p.x, p.y, p.size, p.hue, alpha); } if(t>80){ clearInterval(anim); bctx.clearRect(0,0,burstCan.width,burstCan.height);} },16);
+  let t=0; const anim=setInterval(()=>{ t++; bctx.clearRect(0,0,burstCan.width,burstCan.height); for(let p of particles){ p.x += p.vx; p.y += p.vy; p.vy += 0.25; p.life--; const alpha=Math.max(0,p.life/60); drawHeart(bctx,p.x,p.y,p.size,p.hue,alpha); } if(t>80){ clearInterval(anim); bctx.clearRect(0,0,burstCan.width,burstCan.height);} },16);
 }
-
 function drawHeart(ctx,x,y,s,h,alpha){ ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x,y); ctx.rotate(Math.PI/8); ctx.scale(s/24,s/24); ctx.fillStyle = `hsl(${h},80%,60%)`; ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(0,-6,-12,-14,-24,-6); ctx.bezierCurveTo(-44,6,-24,36,0,56); ctx.bezierCurveTo(24,36,44,6,24,-6); ctx.bezierCurveTo(12,-14,0,-6,0,0); ctx.fill(); ctx.restore(); }
+document.getElementById('burstBtn')?.addEventListener('click', e=>{ heartsBurst(window.innerWidth/2,window.innerHeight/2); });
 
-// bind burst button
-document.getElementById('burstBtn').addEventListener('click',(e)=>{ const r=e.target.getBoundingClientRect(); heartsBurst(r.left + r.width/2, r.top + r.height/2); pulseBtn(e.target); });
-function pulseBtn(el){ el.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:280}); }
+/* Yes/No */
+document.getElementById('yes')?.addEventListener('click', ()=>{ showScreen(9); });
+document.getElementById('no')?.addEventListener('click', ()=>{ alert("Aww, maybe next time 😅"); });
 
-/* YES/NO handling */
-document.getElementById('yes').addEventListener('click', ()=>{ showScreen(9); confettiBurst(); });
-document.getElementById('no').addEventListener('click', ()=>{ // playful response
-  alert('aww, it\'s okay — maybe later!')
-  showScreen(9);
+/* Final Yes -> celebration */
+document.getElementById('finalYes')?.addEventListener('click', ()=>{
+  showScreen(11); startFireworks(); startFall(); playBgm();
 });
 
-/* FINAL buttons */
-document.getElementById('finalYes').addEventListener('click', ()=>{ confettiBurst(); neonGlow(); });
-document.getElementById('finalNo').addEventListener('click', ()=>{ alert('no worries — I still think you\'re awesome 💜'); });
+/* falling hearts */
+function startFall(){ const container=document.getElementById('falling'); for(let i=0;i<24;i++){ const h=document.createElement('div'); h.className='fh'; h.style.left=Math.random()*100+'%'; h.style.fontSize=(12+Math.random()*24)+'px'; h.textContent='💖'; h.style.animationDelay=(Math.random()*8)+'s'; container.appendChild(h); } }
 
-/* falling hearts generator */
-const fallingEl = document.getElementById('falling');
-function startFall(){ for(let i=0;i<18;i++) spawnFH(i*300); setInterval(()=>spawnFH(0),1200); }
-function spawnFH(delay){ setTimeout(()=>{ const d=document.createElement('div'); d.className='fh'; d.style.left = Math.random()*100 + 'vw'; d.style.fontSize = (12+Math.random()*26)+'px'; d.style.opacity = (0.6+Math.random()*0.4); d.textContent = '❤️'; fallingEl.appendChild(d); setTimeout(()=>d.remove(),9000); }, delay); }
-
-/* music control */
-const bgm = document.getElementById('bgm'); const musicToggle = document.getElementById('musicToggle');
-function playBgm(){ bgm.play().catch(()=>{}); musicToggle.textContent='Pause Music ⏸️'; }
-function pauseBgm(){ bgm.pause(); musicToggle.textContent='Play Music ▶️'; }
-musicToggle.addEventListener('click', ()=>{ if(bgm.paused) playBgm(); else pauseBgm(); });
-
-/* confetti */
-const conf = document.getElementById('confetti'); const cctx = conf.getContext('2d'); function resizeConf(){ conf.width=window.innerWidth; conf.height=window.innerHeight; }
-window.addEventListener('resize', resizeConf); resizeConf();
-function confettiBurst(){ const pieces=[]; for(let i=0;i<160;i++){ pieces.push({x:window.innerWidth/2,y:window.innerHeight/3 + Math.random()*200, vx:(Math.random()-0.5)*8, vy:(Math.random()-6)*4, r:4+Math.random()*8, color: `hsl(${Math.random()*50+320},80%,60%)`, life:120}); }
-  let t=0; const id=setInterval(()=>{ t++; cctx.clearRect(0,0,conf.width,conf.height); for(let p of pieces){ p.x += p.vx; p.y += p.vy; p.vy += 0.18; p.life--; cctx.fillStyle=p.color; cctx.beginPath(); cctx.ellipse(p.x,p.y,p.r, p.r*0.6, 0,0,Math.PI*2); cctx.fill(); } if(t>140){ clearInterval(id); cctx.clearRect(0,0,conf.width,conf.height); } },16);
+/* fireworks */
+const fwCan=document.getElementById('fireworks'); const fwCtx=fwCan?.getContext('2d');
+function resizeFW(){ if(!fwCan) return; fwCan.width=window.innerWidth; fwCan.height=window.innerHeight; }
+window.addEventListener('resize',resizeFW); resizeFW();
+function startFireworks(){
+  if(!fwCan) return;
+  const particles=[]; for(let i=0;i<100;i++){ particles.push({x:Math.random()*fwCan.width, y:Math.random()*fwCan.height/2+fwCan.height/4, vx:(Math.random()-0.5)*6, vy:(Math.random()-0.8)*6, r:2+Math.random()*4, hue:Math.random()*360, life:60+Math.random()*40}); }
+  let t=0; const anim=setInterval(()=>{ t++; fwCtx.clearRect(0,0,fwCan.width,fwCan.height); for(let p of particles){ p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; p.life--; fwCtx.fillStyle=`hsl(${p.hue},80%,60%)`; fwCtx.beginPath(); fwCtx.arc(p.x,p.y,p.r,0,Math.PI*2); fwCtx.fill(); } if(t>80) clearInterval(anim); },16);
 }
 
-/* neon glow on final */
-function neonGlow(){ const el = document.querySelector('.neon'); el.animate([{filter:'blur(0px) drop-shadow(0 0 0px #ff8fc4)'},{filter:'blur(0px) drop-shadow(0 0 40px #ff8fc4)'}],{duration:900, iterations:3}); confettiBurst(); }
-
-/* show screen helper on choices */
-function showScreen(n){ for(let i=1;i<=TOTAL_SCREENS;i++){ const s=document.getElementById('s'+i); if(s) s.classList.remove('active'); } const cur=document.getElementById('s'+n); if(cur) cur.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
-
-/* simple helper to create heart particles on any button clicks (global) */
-document.addEventListener('click', (ev)=>{
-  const t = ev.target; if(t.matches('.btn')){
-    const r = t.getBoundingClientRect(); heartsBurst(r.left + r.width/2, r.top + r.height/2);
-  }
+/* bgm */
+const bgm=document.getElementById('bgm'); 
+function playBgm(){ if(bgm) bgm.play(); }
+document.getElementById('musicToggle')?.addEventListener('click',()=>{
+  if(bgm.paused){ bgm.play(); document.getElementById('musicToggle').textContent='Pause Music ⏸️'; }else{ bgm.pause(); document.getElementById('musicToggle').textContent='Play Music ▶️'; }
 });
-
-/* initial resize */n
-resizeBurst(); resizeConf();
-
-// unlock by pressing enter too
-document.getElementById('pw').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('pwBtn').click(); });
-
-/* small UX: if page loaded and there's a fragment like #open3 show that screen (optional) */
-(function(){ const frag = location.hash.replace('#',''); const n = parseInt(frag,10); if(n>=1 && n<=TOTAL_SCREENS){ lock.style.display='none'; showScreen(n); startFall(); } })();
-
 </script>
+
 </body>
 </html>
